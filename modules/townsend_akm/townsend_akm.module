@@ -1,0 +1,12 @@
+<?php
+
+function townsend_akm_menu(){
+  $items = array();
+    $items['akm/connect'] = array(
+    'page callback' => array('townsend_akm_connect'),
+    'access callback' => array(TRUE),
+    'type' => MENU_CALLBACK,
+    'file'=> 'includes/akm.inc'
+  );
+  return $items;
+}

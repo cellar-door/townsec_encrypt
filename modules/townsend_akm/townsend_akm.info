@@ -1,0 +1,4 @@
+name = Townsend AKM
+description = "Creates connection to the AKM server to encrypt sensitive data"
+package = Encryption
+core = 7.x
