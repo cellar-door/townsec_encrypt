@@ -66,7 +66,7 @@ function townsec_encrypt_akm_get_key($settings) {
     drupal_set_message($message = t('An error occurred'), 'error', TRUE);
   }
 
-  return drupal_get_private_key();
+  return $value;
 }
 
 /**
