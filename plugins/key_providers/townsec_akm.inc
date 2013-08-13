@@ -27,8 +27,8 @@ function townsec_encrypt_akm_get_key($settings) {
   $errno = NULL;
   $errstr = NULL;
   $encode = $settings['encode'];
-  $local = drupal_get_path('module', 'townsend_akm') . '/' . $settings['client_cert_and_key_file'];
-  $ca = drupal_get_path('module', 'townsend_akm') . '/' . $settings['ca_cert_file'];
+  $local = DRUPAL_ROOT . '/' . $settings['client_cert_and_key_file'];
+  $ca = DRUPAL_ROOT . '/' . $settings['ca_cert_file'];
 
   //Create TLS Connection with provided key locations
   $opts = array(
@@ -78,9 +78,8 @@ function townsec_encrypt_akm_key_settings_form($defaults) {
   $form['client_cert_and_key_file'] = array(
     '#type' => 'textfield',
     '#title' => t('Location of Client X509 Certificate and Private Key File'),
-    '#description' => t('The file location may be absolute (e.g. %abs) or relative to the Drupal directory (e.g. %rel).', array(
-      '%abs' => '/var/www',
-      '%rel' => '../../keys',
+    '#description' => t('The file location relative to the root Drupal directory (e.g. %rel).', array(
+      '%rel' => '../private/cert/local.pem',
     )),
     '#default_value' => isset($defaults['client_cert_and_key_file']) ? $defaults['client_cert_and_key_file'] : '',
     '#required' => TRUE,
@@ -88,9 +87,8 @@ function townsec_encrypt_akm_key_settings_form($defaults) {
   $form['ca_cert_file'] = array(
     '#type' => 'textfield',
     '#title' => t('Location of Certificate Authority Certificate File'),
-    '#description' => t('The file location may be absolute (e.g. %abs) or relative to the Drupal directory (e.g. %rel).', array(
-      '%abs' => '/var/www',
-      '%rel' => '../../keys',
+    '#description' => t('The file location relative to the root Drupal directory (e.g. %rel).', array(
+      '%rel' => '../private/cert/ca.pem',
     )),
     '#default_value' => isset($defaults['ca_cert_file']) ? $defaults['ca_cert_file'] : '',
     '#required' => TRUE,
