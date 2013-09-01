@@ -58,7 +58,7 @@ function townsec_encrypt_akm_get_key($settings) {
     if($len){
       $rsp = fread($fp, $len + 1);
       if($rsp){
-        $value = substr($rsp, 95);
+        $key = substr($rsp, 95);
       }
     }
     fclose($fp);
@@ -66,7 +66,7 @@ function townsec_encrypt_akm_get_key($settings) {
     drupal_set_message($message = t('An error occurred'), 'error', TRUE);
   }
 
-  return $value;
+  return $key;
 }
 
 /**
