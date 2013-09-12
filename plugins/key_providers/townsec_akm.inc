@@ -65,7 +65,7 @@ function townsec_encrypt_akm_get_key($settings) {
     if($len){
       $rsp = fread($fp, $len + 1);
       if($rsp){
-        $value = substr($rsp, 95);
+        $key = substr($rsp, 95);
       }
     }
     fclose($fp);
@@ -87,7 +87,7 @@ function townsec_encrypt_akm_get_key($settings) {
     watchdog('Key Connect', 'No Key Server Found');
   }
 
-  return $value;
+  return $key;
 }
 
 /**
