@@ -7,7 +7,7 @@
 
 $plugin = array(
   'title' => t('Townsend Security AES'),
-  'description' => t('This encryption method uses Townsend Security’s AES encryption service.'),
+  'description' => t('This encryption method uses the Townsend Security Alliance Key Manager onboard AES encryption to provide remote NIST certified encryption of sensitive data.'),
   'encrypt callback' => 'townsec_encrypt_encryption_method_aes',
 );
 

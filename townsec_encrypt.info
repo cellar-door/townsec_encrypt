@@ -1,6 +1,6 @@
 ;$Id$
-name = Townsend Security Encryption
-description = Adds integration with Townsend Security's encryption services.
+name = Townsend Security AKM
+description = Adds integration with Townsend Security Alliance Key Manager encryption services.
 core = 7.x
 package = Encryption
 
