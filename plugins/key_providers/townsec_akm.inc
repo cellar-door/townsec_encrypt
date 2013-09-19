@@ -17,7 +17,12 @@ $plugin = array(
  * Callback method to return the encryption key from the AKM service.
  */
 function townsec_encrypt_akm_get_key($settings) {
-  
+  // If the encryption method is Townsend Security AES, don't retrieve the key.
+  $encryption_method = variable_get('encrypt_encryption_method', NULL);
+  if ($encryption_method == 'townsec_aes') {
+    return TRUE;
+  }
+
   $primretrieve = $settings['primary_server']['akm_retrieve_port'];
   $bkupretrieve = $settings['backup_server']['akm_retrieve_port'];
   $primserver = 'tls://'.$settings['primary_server']['akm_host_server'].':'.$primretrieve;
