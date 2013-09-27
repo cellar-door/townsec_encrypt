@@ -9,14 +9,14 @@
 $plugin = array(
   'title' => t('Townsend Security AKM'),
   'description' => t('Use Townsend Security’s Alliance Key Manager service for the encryption key.'),
-  'key callback' => 'townsec_encrypt_akm_get_key',
-  'settings form' => 'townsec_encrypt_akm_key_settings_form',
+  'key callback' => 'townsec_key_akm_get_key',
+  'settings form' => 'townsec_key_akm_key_settings_form',
 );
 
 /**
  * Callback method to return the encryption key from the AKM service.
  */
-function townsec_encrypt_akm_get_key($settings) {
+function townsec_key_akm_get_key($settings) {
   // If the encryption method is Townsend Security AES, don't retrieve the key.
   $encryption_method = variable_get('encrypt_encryption_method', NULL);
   if ($encryption_method == 'townsec_aes') {
@@ -98,7 +98,7 @@ function townsec_encrypt_akm_get_key($settings) {
 /**
  * Settings form for our key provider.
  */
-function townsec_encrypt_akm_key_settings_form($defaults) {
+function townsec_key_akm_key_settings_form($defaults) {
   $form = array();
   
   $form['primary_server'] = array(

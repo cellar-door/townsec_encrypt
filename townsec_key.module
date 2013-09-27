@@ -13,24 +13,24 @@
  *
  * Tell ctools about our plugins.
  */
-function townsec_encrypt_ctools_plugin_directory($module, $plugin) {
+function townsec_key_ctools_plugin_directory($module, $plugin) {
   if ($module == 'encrypt') {
     return 'plugins/' . $plugin;
   }
 }
 
-function townsec_encrypt_menu(){
+function townsec_key_menu(){
     $items = array();
 
   $items['test/akmtest'] = array(
-    'page callback' => 'townsec_encrypt_test',
+    'page callback' => 'townsec_key_test',
     'access arguments' => array('administer encrypt'),
   );
   
   return $items;
 }
 
-function townsec_encrypt_test(){
+function townsec_key_test(){
   $provider = encrypt_get_key_provider('townsec_akm');
   $settings = $provider['settings'];
   $primencrypt = $settings['primary_server']['akm_encrypt_port'];
