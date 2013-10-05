@@ -60,10 +60,8 @@ function townsec_key_encryption_method_aes($op = 'encrypt', $text = '', $key = '
   elseif($fp = stream_socket_client($bkupserver, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $bkupctx)){}
   
   if($fp == false){
-    dpm('whoops!');
     return '';
   }
-  dpm("I'm trying to " . $op . " with " . $text);
 /*
 Key Length = 40 (left justify pad on right)
 Instance = 24 (leave blank or instance got back)
@@ -102,15 +100,12 @@ Instance = 24 (leave blank or instance got back)
         return '';
       }
     fclose($fp);
-
-    dpm('the encrypted value is ' . $value);
     return $value;
    }
    else{
     $iv = substr($text, 0, 16);
     $inst = substr($text, 16, 24);
     $coded = substr($text, 40);
-    dpm('the iv to decrypt is ' . $iv . ' with the key instance ' . $inst . ' and the value ' . $coded);
     $textcount = sprintf('%05d', strlen($coded));
     $keypad = sprintf('% -40s', $keyname);
     $key = $keypad . $inst;  
@@ -121,7 +116,6 @@ Instance = 24 (leave blank or instance got back)
       if($len){
         $rsp = fread($fp, $len + $textcount);
         if($rsp){
-          dpm('voila! We got ' . $rsp);
           $value = substr($rsp, 39);
           $value = rtrim($value);
         }
