@@ -8,3 +8,4 @@ files[] = townsec_key.module
 
 dependencies[] = ctools
 dependencies[] = encrypt
+dependencies[] = user
