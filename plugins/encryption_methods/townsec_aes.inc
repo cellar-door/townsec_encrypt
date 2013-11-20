@@ -84,7 +84,7 @@ Instance = 24 (leave blank or instance got back)
     
     $request = sprintf("000982019YNBIN". $textcount . "YNYY" . $iv . "" . $key . "" . "" . $text . "");
                                                          
-    fputs($fp, $request);
+    fwrite($fp, $request);
     $len = fread($fp, 5);
     if($len){
       $return = fread($fp, $len + $textcount);
@@ -111,7 +111,7 @@ Instance = 24 (leave blank or instance got back)
     $key = $keypad . $inst;  
     $decrypt_header = "001012021YNBIN" . $textcount . "BINYNYY".$iv.$key;
     $decrypt = sprintf($decrypt_header.$coded);      
-      fputs($fp, $decrypt); 
+      fwrite($fp, $decrypt); 
       $len = fread($fp, 5);
       if($len){
         $rsp = fread($fp, $len + $textcount);

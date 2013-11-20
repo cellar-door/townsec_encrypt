@@ -27,11 +27,7 @@ function townsec_key_akm_get_key($settings) {
   $bkupretrieve = $settings['backup_server']['akm_retrieve_port'];
   $primserver = 'tls://'.$settings['primary_server']['akm_host_server'].':'.$primretrieve;
   $bkupserver = 'tls://'.$settings['backup_server']['akm_backup_server'].':'.$bkupretrieve;
-  $primencrypt = $settings['primary_server']['akm_encrypt_port'];
-  $bkupencrypt = $settings['backup_server']['akm_encrypt_port'];
-  $keytype = $settings['key_type'];
   $keyname = $settings['key_name'];
-  $keysize = $settings['key_size'];
   $errno = NULL;
   $errstr = NULL;
   $encode = $settings['encode'];
@@ -65,7 +61,7 @@ function townsec_key_akm_get_key($settings) {
   //Request Key
   if($fp = stream_socket_client($primserver, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $primctx)){
     $request = sprintf("000712001%-40s%24s".$encode, $keyname, '');
-    fputs($fp, $request);
+    fwrite($fp, $request);
     $len = fread($fp, 5);
     if($len){
       $rsp = fread($fp, $len + 1);
@@ -76,19 +72,20 @@ function townsec_key_akm_get_key($settings) {
     fclose($fp);
   }elseif($fp = stream_socket_client($bkupserver, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $bkupctx)){
         $request = sprintf("000712001%-40s%24s".$encode, $keyname, '');
-    fputs($fp, $request);
+    fwrite($fp, $request);
     $len = fread($fp, 5);
     if($len){
       $rsp = fread($fp, $len + 1);
       if($rsp){
-        $value = substr($rsp, 95);
+        $key = substr($rsp, 95);
         watchdog('Key Connect', 'Primary server not found, successfully used backup server %server.', array('%server' => $bkupserver));
       }
     }
     fclose($fp);
   }
   else{
-    drupal_set_message($message = t('An error occurred'), 'error', TRUE);
+    $message = t('An error occurred');
+    drupal_set_message($message, 'error', TRUE);
     watchdog('Key Connect', 'No Key Server Found');
   }
 
