@@ -2,8 +2,8 @@
 
 /**
  * @file
- * Plugin definition for a key provider using Townsend Security’s Alliance Kay 
- * Manager service.
+ * Plugin definition for a key provider using
+ * Townsend Security’s Alliance Key Manager service.
  */
 
 $plugin = array(
@@ -35,37 +35,34 @@ function townsec_key_akm_get_key($settings) {
   $primca = DRUPAL_ROOT . '/' . $settings['primary_server']['ca_cert_file'];
   $bkuplocal = DRUPAL_ROOT . '/' . $settings['backup_server']['client_cert_and_key_file'];
   $bkupca = DRUPAL_ROOT . '/' . $settings['backup_server']['ca_cert_file'];
-
-  //Create TLS Connection with provided key locations
+  // Create TLS Connection with provided key locations.
   $primopts = array(
     'ssl' => array(
       'cafile' => $primca,
-      'capture_peer_cert' => true,
+      'capture_peer_cert' => TRUE,
       'local_cert' => $primlocal,
-      'verify_peer' => true,
-    )
+      'verify_peer' => TRUE,
+    ),
   );
-  
   $bkupopts = array(
     'ssl' => array(
       'cafile' => $bkupca,
-      'capture_peer_cert' => true,
+      'capture_peer_cert' => TRUE,
       'local_cert' => $bkuplocal,
-      'verify_peer' => true,
-    )
+      'verify_peer' => TRUE,
+    ),
   );
-  //Create TLS context
+  // Create TLS context.
   $primctx = stream_context_create($primopts);
   $bkupctx = stream_context_create($bkupopts);
-  
   //Request Key
   if($fp = stream_socket_client($primserver, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $primctx)){
     $request = sprintf("000712001%-40s%24s".$encode, $keyname, '');
     fwrite($fp, $request);
     $len = fread($fp, 5);
-    if($len){
+    if ($len) {
       $rsp = fread($fp, $len + 1);
-      if($rsp){
+      if ($rsp) {
         $key = substr($rsp, 95);
       }
     }
@@ -74,7 +71,7 @@ function townsec_key_akm_get_key($settings) {
         $request = sprintf("000712001%-40s%24s".$encode, $keyname, '');
     fwrite($fp, $request);
     $len = fread($fp, 5);
-    if($len){
+    if ($len) {
       $rsp = fread($fp, $len + 1);
       if($rsp){
         $key = substr($rsp, 95);
@@ -88,7 +85,6 @@ function townsec_key_akm_get_key($settings) {
     drupal_set_message($message, 'error', TRUE);
     watchdog('Key Connect', 'No Key Server Found');
   }
-
   return $key;
 }
 
@@ -97,7 +93,6 @@ function townsec_key_akm_get_key($settings) {
  */
 function townsec_key_akm_key_settings_form($defaults) {
   $form = array();
-  
   $form['primary_server'] = array(
     '#type' => 'fieldset',
     '#title' => t('Primary Server Settings'),
@@ -110,7 +105,7 @@ function townsec_key_akm_key_settings_form($defaults) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
-    $form['primary_server']['client_cert_and_key_file'] = array(
+  $form['primary_server']['client_cert_and_key_file'] = array(
     '#type' => 'textfield',
     '#title' => t('Location of Client X509 Certificate and Private Key File'),
     '#description' => t('The file location relative to the root Drupal directory (e.g. %rel).', array(
@@ -181,7 +176,7 @@ function townsec_key_akm_key_settings_form($defaults) {
     '#default_value' => isset($defaults['primary_server']['akm_encrypt_port']) ? $defaults['primary_server']['akm_encrypt_port'] : '',
     '#required' => TRUE,
   );
-    $form['backup_server']['akm_encrypt_port'] = array(
+  $form['backup_server']['akm_encrypt_port'] = array(
     '#type' => 'textfield',
     '#title' => t('Remote Encryption Port'),
     '#description' => t('Enter the number of the port for remote encryption.'),
@@ -222,6 +217,5 @@ function townsec_key_akm_key_settings_form($defaults) {
     ),
     '#default_value' => isset($defaults['key_type']) ? $defaults['encode'] : 'B64',
   );
-
   return $form;
 }

@@ -12,7 +12,7 @@ $plugin = array(
 );
 
 /**
- * Callback for Encrypt implementation: default
+ * Callback for Encrypt implementation: default.
  *
  * This method uses a simple encryption method of character
  * replacement.
@@ -22,87 +22,77 @@ function townsec_key_encryption_method_aes($op = 'encrypt', $text = '', $key = '
   $settings = $provider['settings'];
   $primencrypt = $settings['primary_server']['akm_encrypt_port'];
   $bkupencrypt = $settings['backup_server']['akm_encrypt_port'];
-  $primserver = 'tls://'.$settings['primary_server']['akm_host_server'].':'.$primencrypt;
-  $bkupserver = 'tls://'.$settings['backup_server']['akm_backup_server'].':'.$bkupencrypt;
+  $primserver = 'tls://' . $settings['primary_server']['akm_host_server'] . ':' . $primencrypt;
+  $bkupserver = 'tls://' . $settings['backup_server']['akm_backup_server'] . ':' . $bkupencrypt;
   $keyname = $settings['key_name'];
   $errno = NULL;
   $errstr = NULL;
-  //For now we assume Binary
-  //$encode = $settings['encode'];
   $primlocal = DRUPAL_ROOT . '/' . $settings['primary_server']['client_cert_and_key_file'];
   $primca = DRUPAL_ROOT . '/' . $settings['primary_server']['ca_cert_file'];
   $bkuplocal = DRUPAL_ROOT . '/' . $settings['backup_server']['client_cert_and_key_file'];
   $bkupca = DRUPAL_ROOT . '/' . $settings['backup_server']['ca_cert_file'];
 
-  //Create TLS Connection with provided key locations
+  // Create TLS Connection with provided key locations.
   $primopts = array(
     'ssl' => array(
       'cafile' => $primca,
-      'capture_peer_cert' => true,
+      'capture_peer_cert' => TRUE,
       'local_cert' => $primlocal,
-      'verify_peer' => true,
-    )
+      'verify_peer' => TRUE,
+    ),
   );
-  
   $bkupopts = array(
     'ssl' => array(
       'cafile' => $bkupca,
-      'capture_peer_cert' => true,
+      'capture_peer_cert' => TRUE,
       'local_cert' => $bkuplocal,
-      'verify_peer' => true,
-    )
+      'verify_peer' => TRUE,
+    ),
   );
-  //Create TLS context
+  // Create TLS context.
   $primctx = stream_context_create($primopts);
   $bkupctx = stream_context_create($bkupopts);
-    
-  if($fp = stream_socket_client($primserver, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $primctx)){}
-  elseif($fp = stream_socket_client($bkupserver, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $bkupctx)){}
-  
-  if($fp == false){
+  if ($fp = stream_socket_client($primserver, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $primctx)) {
+    // Initiate the primary connection.
+  }
+  elseif ($fp = stream_socket_client($bkupserver, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $bkupctx)) {
+    // Create backup connection.
+  }
+  if ($fp == FALSE) {
     return '';
   }
-/*
-Key Length = 40 (left justify pad on right)
-Instance = 24 (leave blank or instance got back)
-*/
-  if($op == 'encrypt'){
-//Generate a random IV to use w/ the encryption
+  // Key Length = 40 (left justify pad on right).
+  // Instance = 24 (leave blank or instance got back).
+  if ($op == 'encrypt') {
+    // Generate a random IV to use w/ the encryption.
     $iv = user_password(16);
-    
     $textcount = sprintf('%05d', strlen($text));
-    
-    if($textcount < 16){
+    if ($textcount < 16) {
       $text = sprintf('% -16s', $text);
       $textcount = sprintf('%05d', strlen($text));
     }
-    else{
+    else {
       return '';
     }
     $key = sprintf('% -64s', $keyname);
-
-    
     $request = sprintf("000982019YNBIN". $textcount . "YNYY" . $iv . "" . $key . "" . "" . $text . "");
-                                                         
     fwrite($fp, $request);
     $len = fread($fp, 5);
-    if($len){
+    if ($len) {
       $return = fread($fp, $len + $textcount);
-      
-      if($return){
+      if ($return) {
         $inst = substr($return, 15, 24);
         $coded = substr($return, 39);
         $value = $iv . $inst . $coded;
       }
-      
     }
-    else{
-        return '';
-      }
+    else {
+      return '';
+    }
     fclose($fp);
     return $value;
-   }
-   else{
+  }
+  else {
     $iv = substr($text, 0, 16);
     $inst = substr($text, 16, 24);
     $coded = substr($text, 40);
@@ -123,8 +113,11 @@ Instance = 24 (leave blank or instance got back)
       else{
         return '';
       }
-      fclose($fp);
-
-      return $value;
     }
+    else {
+      return '';
+    }
+    fclose($fp);
+    return $value;
+  }
 }
